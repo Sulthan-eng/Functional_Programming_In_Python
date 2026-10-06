@@ -266,3 +266,80 @@ hasil = pinjam_buku("Python untuk Pemula")
 print("Status aktif:", hasil)
 
 
+
+"""
+Decorator dgn Argumen. cth
+"""
+def butuh_role(role_dibutuhkan):          # lapis 1: menerima argumen decorator
+    def decorator(func):                  # lapis 2: menerima fungsi (decorator biasa)
+        def wrapper(*args, **kwargs):     # lapis 3: pembungkus
+            ...
+        return wrapper
+    return decorator
+
+
+def ulang(kali):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for _ in range(kali):
+                func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@ulang(3)
+def sapa():
+    print("Halo")
+
+sapa()
+
+
+
+@ulang(2)
+def sapa(nama):
+    print("Halo", nama)
+
+sapa("Budi")
+
+def ulang(kali):                     # lapis 1: menerima 2          -> kali = 2
+    def decorator(func):             # lapis 2: menerima sapa       -> func = sapa
+        def wrapper(*args, **kwargs):# lapis 3: menerima "Budi"     -> args = ("Budi",)
+            for _ in range(kali):
+                func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+"""
+Aplikasi kantor punya lihat_gaji() dan hapus_karyawan(). Setiap pengguna punya role ("staff", "manager", "admin"). 
+Buat decorator butuh_role(role_dibutuhkan) sehingga lihat_gaji hanya bisa diakses manager, dan hapus_karyawan hanya bisa diakses admin. 
+Pengguna dengan role lain mendapat pesan penolakan yang menyebutkan role apa yang dibutuhkan.
+"""
+role = "manager"
+
+def butuh_role(role_dibutuhkan):          # lapis 1
+    def decorator(func):                  # lapis 2
+        def wrapper(*args, **kwargs):     # lapis 3
+            if role == role_dibutuhkan:
+                return func(*args, **kwargs)
+            else:
+                print(f"Ga sesuai nih role nya {role}, yang bisa {role_dibutuhkan}")
+                return "ditolak"
+        return wrapper
+    return decorator
+
+@butuh_role("manager")
+def lihat_gaji():
+    print("Melihat gaji")
+    return ('sukses')
+
+@butuh_role("admin")
+def hapus_karyawan():
+    print("Melihat karyawan")
+    return ('sukses')
+
+# Pengujian
+for r in ["staff", "manager", "admin"]:
+    role = r
+    print("\n--- role:", role)
+    print("lihat_gaji      ->", lihat_gaji())
+    print("hapus_karyawan  ->", hapus_karyawan())
