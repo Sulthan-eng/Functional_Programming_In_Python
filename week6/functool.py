@@ -58,3 +58,29 @@ def fib(n):
     return fib(n-1) + fib(n-2)
 
 print(fib(30))   # 832040, selesai sangat cepat
+
+
+
+"""
+SingleDispatch
+Satu nama fungsi, banyak versi, dan Python memilih versi yang cocok berdasarkan tipe argumen pertama.
+Keunggulan : 
+Menambah jenis baru cukup dengan menambah fungsi baru, tanpa menyentuh kode lama
+"""
+from functools import singledispatch
+
+@singledispatch
+def process(data):
+    print("Default processing")
+
+@process.register
+def _(data: int):
+    print(f"Processing integer: {data}")
+
+@process.register
+def _(data: list):
+    print(f"Processing list of length {len(data)}")
+
+process(10)        # Processing integer: 10
+process([1,2,3])   # Processing list of length 3
+process("hello")   # Default processing
